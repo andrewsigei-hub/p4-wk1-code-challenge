@@ -1,0 +1,23 @@
+meta {
+  name: hero_powers
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:5555/hero_powers
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "strength": "Average",
+    "power_id": 1,
+    "hero_id": 3
+  }
+}
+
+settings {
+  encodeUrl: true
+}

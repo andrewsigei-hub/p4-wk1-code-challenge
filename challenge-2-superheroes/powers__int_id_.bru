@@ -1,0 +1,15 @@
+meta {
+  name: powers/<int:id>
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:5555/powers/1
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

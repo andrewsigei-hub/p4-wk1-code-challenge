@@ -1,0 +1,21 @@
+meta {
+  name: powers/<int:id>_1
+  type: http
+  seq: 6
+}
+
+patch {
+  url: http://localhost:5555/powers/1
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "description": "Valid Updated Description"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
