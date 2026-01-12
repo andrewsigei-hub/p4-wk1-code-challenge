@@ -1,0 +1,291 @@
+# Superheroes API
+
+A Flask-based REST API for tracking heroes and their superpowers. This application implements a many-to-many relationship between heroes and powers through an association table (HeroPower) that includes additional attributes.
+
+## Features
+
+- Full CRUD operations for heroes and powers
+- Many-to-many relationship management through HeroPower join table
+- Data validation for strength levels and power descriptions
+- RESTful API design with appropriate HTTP status codes
+- JSON serialization with relationship handling to prevent infinite recursion
+
+## Technologies Used
+
+- **Flask** - Web framework
+- **Flask-SQLAlchemy** - ORM for database operations
+- **Flask-Migrate** - Database migrations
+- **SQLAlchemy-Serializer** - Model serialization to JSON
+- **SQLite** - Database
+
+## Models
+
+### Hero
+- `id`: Integer, primary key
+- `name`: String, hero's real name
+- `super_name`: String, hero's superhero name
+- **Relationship**: Has many Powers through HeroPower
+
+### Power
+- `id`: Integer, primary key
+- `name`: String, power name
+- `description`: String, power description (minimum 20 characters)
+- **Relationship**: Has many Heroes through HeroPower
+- **Validation**: Description must be at least 20 characters long
+
+### HeroPower (Join Table)
+- `id`: Integer, primary key
+- `strength`: String, must be 'Strong', 'Weak', or 'Average'
+- `hero_id`: Foreign key to Hero
+- `power_id`: Foreign key to Power
+- **Relationships**: Belongs to Hero and Power
+- **Validation**: Strength must be one of the three specified values
+- **Cascade Delete**: Deletes automatically when parent Hero or Power is deleted
+
+## Setup Instructions
+
+1. **Clone the repository**
+```bash
+   git clone <your-repo-url>
+   cd p4-wk1-code-challenge/server
+```
+
+2. **Install dependencies**
+```bash
+   pipenv install
+   pipenv shell
+```
+
+3. **Initialize the database**
+```bash
+   flask db init
+   flask db migrate -m "Initial migration"
+   flask db upgrade
+```
+
+4. **Seed the database**
+```bash
+   python seed.py
+```
+
+5. **Run the application**
+```bash
+   python app.py
+```
+
+   The server will start on `http://127.0.0.1:5555`
+
+## API Endpoints
+
+### Heroes
+
+#### GET /heroes
+Returns a list of all heroes.
+
+**Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "name": "Kamala Khan",
+    "super_name": "Ms. Marvel"
+  }
+]
+```
+
+#### GET /heroes/:id
+Returns a single hero with their powers.
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "name": "Kamala Khan",
+  "super_name": "Ms. Marvel",
+  "hero_powers": [
+    {
+      "id": 1,
+      "hero_id": 1,
+      "power_id": 2,
+      "strength": "Strong",
+      "power": {
+        "id": 2,
+        "name": "flight",
+        "description": "gives the wielder the ability to fly through the skies at supersonic speed"
+      }
+    }
+  ]
+}
+```
+
+**Response (404 Not Found):**
+```json
+{
+  "error": "Hero not found"
+}
+```
+
+### Powers
+
+#### GET /powers
+Returns a list of all powers.
+
+**Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "name": "super strength",
+    "description": "gives the wielder super-human strengths"
+  }
+]
+```
+
+#### GET /powers/:id
+Returns a single power.
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "name": "super strength",
+  "description": "gives the wielder super-human strengths"
+}
+```
+
+**Response (404 Not Found):**
+```json
+{
+  "error": "Power not found"
+}
+```
+
+#### PATCH /powers/:id
+Updates an existing power's description.
+
+**Request Body:**
+```json
+{
+  "description": "Updated description that is at least 20 characters long"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "name": "super strength",
+  "description": "Updated description that is at least 20 characters long"
+}
+```
+
+**Response (404 Not Found):**
+```json
+{
+  "error": "Power not found"
+}
+```
+
+**Response (400 Bad Request - Validation Error):**
+```json
+{
+  "errors": ["Description must be at least 20 characters long"]
+}
+```
+
+### Hero Powers
+
+#### POST /hero_powers
+Creates a new association between a hero and a power.
+
+**Request Body:**
+```json
+{
+  "strength": "Average",
+  "power_id": 1,
+  "hero_id": 3
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": 4,
+  "strength": "Average",
+  "hero_id": 3,
+  "power_id": 1,
+  "hero": {
+    "id": 3,
+    "name": "Gwen Stacy",
+    "super_name": "Spider-Gwen"
+  },
+  "power": {
+    "id": 1,
+    "name": "super strength",
+    "description": "gives the wielder super-human strengths"
+  }
+}
+```
+
+**Response (400 Bad Request - Validation Error):**
+```json
+{
+  "errors": ["Strength must be 'Strong', 'Weak', or 'Average'"]
+}
+```
+
+## Validations
+
+### Power Model
+- **Description**: Must be present and at least 20 characters long
+
+### HeroPower Model
+- **Strength**: Must be one of: 'Strong', 'Weak', or 'Average'
+
+## Database Schema
+```
+heroes
+├── id (PK)
+├── name
+└── super_name
+
+powers
+├── id (PK)
+├── name
+└── description
+
+hero_powers
+├── id (PK)
+├── strength
+├── hero_id (FK -> heroes.id)
+└── power_id (FK -> powers.id)
+```
+
+## Testing
+
+You can test the API using:
+- **Bruno** - Import the provided Postman collection
+- **Postman** - Use the provided collection file
+- **cURL** - Command line HTTP requests
+- **Browser** - For GET requests only
+
+## Project Structure
+```
+server/
+├── app.py              # Flask application and routes
+├── models.py           # Database models
+├── seed.py             # Database seeding script
+├── instance/
+│   └── app.db          # SQLite database file
+├── migrations/         # Database migration files
+├── Pipfile             # Python dependencies
+└── Pipfile.lock        # Locked dependencies
+```
+
+## Author
+
+Andrew Sigei - Moringa School Phase 4 Week 1 Code Challenge
+
+## License
+
+This project is part of the Moringa School curriculum.
