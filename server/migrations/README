@@ -21,14 +21,12 @@ A Flask-based REST API for tracking heroes and their superpowers. This applicati
 ## Models
 
 ### Hero
-
 - `id`: Integer, primary key
 - `name`: String, hero's real name
 - `super_name`: String, hero's superhero name
 - **Relationship**: Has many Powers through HeroPower
 
 ### Power
-
 - `id`: Integer, primary key
 - `name`: String, power name
 - `description`: String, power description (minimum 20 characters)
@@ -36,7 +34,6 @@ A Flask-based REST API for tracking heroes and their superpowers. This applicati
 - **Validation**: Description must be at least 20 characters long
 
 ### HeroPower (Join Table)
-
 - `id`: Integer, primary key
 - `strength`: String, must be 'Strong', 'Weak', or 'Average'
 - `hero_id`: Foreign key to Hero
@@ -48,21 +45,18 @@ A Flask-based REST API for tracking heroes and their superpowers. This applicati
 ## Setup Instructions
 
 1. **Clone the repository**
-
 ```bash
    git clone <your-repo-url>
    cd p4-wk1-code-challenge/server
 ```
 
 2. **Install dependencies**
-
 ```bash
    pipenv install
    pipenv shell
 ```
 
 3. **Initialize the database**
-
 ```bash
    flask db init
    flask db migrate -m "Initial migration"
@@ -70,29 +64,25 @@ A Flask-based REST API for tracking heroes and their superpowers. This applicati
 ```
 
 4. **Seed the database**
-
 ```bash
    python seed.py
 ```
 
 5. **Run the application**
-
 ```bash
    python app.py
 ```
 
-The server will start on `http://127.0.0.1:5555`
+   The server will start on `http://127.0.0.1:5555`
 
 ## API Endpoints
 
 ### Heroes
 
 #### GET /heroes
-
 Returns a list of all heroes.
 
 **Response (200 OK):**
-
 ```json
 [
   {
@@ -104,11 +94,9 @@ Returns a list of all heroes.
 ```
 
 #### GET /heroes/:id
-
 Returns a single hero with their powers.
 
 **Response (200 OK):**
-
 ```json
 {
   "id": 1,
@@ -131,7 +119,6 @@ Returns a single hero with their powers.
 ```
 
 **Response (404 Not Found):**
-
 ```json
 {
   "error": "Hero not found"
@@ -141,11 +128,9 @@ Returns a single hero with their powers.
 ### Powers
 
 #### GET /powers
-
 Returns a list of all powers.
 
 **Response (200 OK):**
-
 ```json
 [
   {
@@ -157,11 +142,9 @@ Returns a list of all powers.
 ```
 
 #### GET /powers/:id
-
 Returns a single power.
 
 **Response (200 OK):**
-
 ```json
 {
   "id": 1,
@@ -171,7 +154,6 @@ Returns a single power.
 ```
 
 **Response (404 Not Found):**
-
 ```json
 {
   "error": "Power not found"
@@ -179,11 +161,9 @@ Returns a single power.
 ```
 
 #### PATCH /powers/:id
-
 Updates an existing power's description.
 
 **Request Body:**
-
 ```json
 {
   "description": "Updated description that is at least 20 characters long"
@@ -191,7 +171,6 @@ Updates an existing power's description.
 ```
 
 **Response (200 OK):**
-
 ```json
 {
   "id": 1,
@@ -201,7 +180,6 @@ Updates an existing power's description.
 ```
 
 **Response (404 Not Found):**
-
 ```json
 {
   "error": "Power not found"
@@ -209,7 +187,6 @@ Updates an existing power's description.
 ```
 
 **Response (400 Bad Request - Validation Error):**
-
 ```json
 {
   "errors": ["Description must be at least 20 characters long"]
@@ -219,11 +196,9 @@ Updates an existing power's description.
 ### Hero Powers
 
 #### POST /hero_powers
-
 Creates a new association between a hero and a power.
 
 **Request Body:**
-
 ```json
 {
   "strength": "Average",
@@ -233,7 +208,6 @@ Creates a new association between a hero and a power.
 ```
 
 **Response (201 Created):**
-
 ```json
 {
   "id": 4,
@@ -254,7 +228,6 @@ Creates a new association between a hero and a power.
 ```
 
 **Response (400 Bad Request - Validation Error):**
-
 ```json
 {
   "errors": ["Strength must be 'Strong', 'Weak', or 'Average'"]
@@ -264,15 +237,12 @@ Creates a new association between a hero and a power.
 ## Validations
 
 ### Power Model
-
 - **Description**: Must be present and at least 20 characters long
 
 ### HeroPower Model
-
 - **Strength**: Must be one of: 'Strong', 'Weak', or 'Average'
 
 ## Database Schema
-
 ```
 heroes
 ├── id (PK)
@@ -294,13 +264,12 @@ hero_powers
 ## Testing
 
 You can test the API using:
-
 - **Bruno** - Import the provided Postman collection
 - **Postman** - Use the provided collection file
+- **cURL** - Command line HTTP requests
 - **Browser** - For GET requests only
 
 ## Project Structure
-
 ```
 server/
 ├── app.py              # Flask application and routes
